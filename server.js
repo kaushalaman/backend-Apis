@@ -15,7 +15,7 @@ const Hapi = require('hapi'),
 
 let connectionOptions = {
 
-    port: config.serverConfig.PORT.LOCAL,
+    port: process.env.PORT,
 
     host: config.serverConfig.HOST,
 
