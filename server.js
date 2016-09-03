@@ -15,7 +15,7 @@ const Hapi = require('hapi'),
 
 let connectionOptions = {
 
-    port: process.env.PORT,
+    port: config.serverConfig.PORT,
 
     host: config.serverConfig.HOST,
 
@@ -47,6 +47,22 @@ Routes.forEach((api) => {
 
     server.route(api);
 
+});
+
+server.route({
+    method: 'GET',
+    path: '/',
+    handler:  (request, reply) => {
+        reply.file('./Views/welcome.html');
+    }
+});
+
+server.route({
+    method: 'GET',
+    path: '/index',
+    handler:  (request, reply) => {
+        reply.file('./Views/index.html');
+    }
 });
 
 //Adding Views

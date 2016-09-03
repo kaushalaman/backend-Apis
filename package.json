@@ -1,7 +1,7 @@
 {
   "name": "aman",
   "version": "1.0.0",
-  "description": "backend api",
+  "description": "toppr contest - backend api",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,6 +11,7 @@
   "dependencies": {
     "async": "^2.0.0-rc.6",
     "boom": "^3.2.2",
+    "csv2html": "0.0.1",
     "csvtojson": "^1.0.0",
     "good": "^6.6.0",
     "good-console": "^5.3.1",

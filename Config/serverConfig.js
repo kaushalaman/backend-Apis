@@ -2,10 +2,7 @@
 
 const HOST = '0.0.0.0';
 
-const PORT = {
-    SERVER: 3001,
-    LOCAL: 3000
-};
+const PORT = process.env.PORT
 
 module.exports = {
     PORT: PORT,
