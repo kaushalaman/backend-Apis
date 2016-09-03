@@ -152,6 +152,102 @@ let importCSVIntoDB = (payload, callbackRoute) => {
     });
 };
 
+let getJSONFromCSV = (payload, callbackRoute) => {
+
+    let fileName;
+
+    let filePath;
+
+    let type;
+
+    let DOCUMENTS_TYPE = ["text/csv"];
+
+    let jsonData;
+    let finalJsonData = [];
+
+    let cols;
+
+    let returnedData = {};
+
+    async.auto({
+
+        documentType: (callback) => {
+
+            fileName = payload.csvFile.filename;
+
+            type = mime.lookup(fileName);
+
+
+            if (DOCUMENTS_TYPE.indexOf(type) == -1) {
+
+                return callback(ERROR_MESSAGES.SUPPORTED_DOCUMENT_TYPES);
+            }
+
+            returnedData.fileName = fileName;
+
+            returnedData.fileType = type;
+
+            filePath = payload.csvFile.path;
+
+            return callback(null, filePath);
+
+
+        },
+
+        convertCSVIntoJSON: ['documentType', (results, callback) => {
+
+            util.getJsonFromCSVFile(filePath, callback);
+
+        }],
+
+        buildData: ['convertCSVIntoJSON', (results, callback) => {
+
+            jsonData = results.convertCSVIntoJSON;
+
+            if (jsonData.length > 0) {
+
+                jsonData.forEach((object) => {
+
+                    console.log(object);
+
+                    cols = util.getKeys(object);
+
+                    let tempObj = {};
+
+                    cols.forEach((key) => {
+
+                        if (object[key] === "") {
+                            tempObj[key] = null;
+                        }
+                        else {
+                            tempObj[key] = object[key];
+                        }
+                    });
+
+                    finalJsonData.push(tempObj);
+
+                    returnedData.jsonData = finalJsonData;
+
+                    returnedData.count = finalJsonData.length;
+
+                });
+
+                return callback(null);
+            }
+            else {
+
+                return callback(ERROR_MESSAGES.EMPTY_CSV_FILE);
+            }
+        }]
+
+    }, (error, data) => {
+        if (error) {
+            return callbackRoute(error);
+        }
+        return callbackRoute(null, returnedData);
+    });
+};
+
 let listPlaces = (callbackRoute) => {
 
     let returnedData = [];
@@ -369,6 +465,7 @@ let searchBy = (query, callbackRoute) => {
 
 module.exports = {
     importCSVIntoDB,
+    getJSONFromCSV,
     listPlaces,
     countData,
     //getStats,

@@ -80,6 +80,12 @@ let STATUS_MSG = {
             statusCode: STATUS_CODE.OK,
             customMessage: 'Success',
             type: 'DEFAULT'
+        },
+
+        DATA_IMPORT_DB: {
+            statusCode: STATUS_CODE.CREATED,
+            customMessage: 'Successfully CSV Data imported in Mongo DB',
+            type: 'DATA_IMPORT_DB'
         }
     }
 

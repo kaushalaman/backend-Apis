@@ -25,7 +25,7 @@ let importCSVIntoDB = {
 
     method: 'POST',
 
-    path: '/api/v1/toppr/importCsvIntoJson',
+    path: '/api/v1/toppr/importCsvIntoDb',
 
     config: {
 
@@ -49,7 +49,7 @@ let importCSVIntoDB = {
 
                 } else {
 
-                    reply(util.sendSuccess(SUCCESS_MESSAGES.DEFAULT, success)).code(STATUS_CODE.OK);
+                    reply(util.sendSuccess(SUCCESS_MESSAGES.DATA_IMPORT_DB, success)).code(STATUS_CODE.CREATED);
                 }
             });
         },
@@ -57,7 +57,7 @@ let importCSVIntoDB = {
 
             payload: {
 
-                csvFile: Joi.any().meta({swaggerType: 'file'}).required()
+                csvFile: Joi.any().meta({swaggerType: 'file'}).required().description("UPLOAD CSV FILE")
 
             },
 
@@ -83,7 +83,7 @@ let listPlaces = {
 
     config: {
 
-        description: 'List Places',
+        description: 'List Places Of Battles',
 
         tags: TAGS,
 
@@ -109,6 +109,60 @@ let listPlaces = {
         plugins: {
 
             'hapi-swagger': CONSTANT.SWAGGER_OPTIONS_JSON
+
+        }
+    }
+};
+
+let getJSONFromCSV = {
+
+    method: 'POST',
+
+    path: '/api/v1/toppr/getJSONFromCSV',
+
+    config: {
+
+        description: 'Get Data in JSON form from CSV File',
+
+        tags: TAGS,
+
+        payload: {
+            maxBytes: 20715200,
+            output: 'file',
+            parse: true,
+            allow: 'multipart/form-data'
+        },
+
+        handler:  (request, reply) => {
+
+            routeController.getJSONFromCSV( request.payload, (error, success) => {
+                if (error) {
+
+                    reply(util.sendError(error));
+
+                } else {
+
+                    reply(util.sendSuccess(SUCCESS_MESSAGES.DATA_IMPORT_DB, success)).code(STATUS_CODE.CREATED);
+                }
+            });
+        },
+        validate: {
+
+            payload: {
+
+                csvFile: Joi.any().meta({swaggerType: 'file'}).required()
+
+            },
+
+            failAction: util.failActionFunction
+
+        },
+        plugins: {
+
+            'hapi-swagger': {
+                payloadType: 'file',
+                responseMessages: CONSTANT.swaggerDefaultResponseMessages
+            }
 
         }
     }
@@ -220,7 +274,7 @@ let searchBy = {
 
             query: {
 
-                name: Joi.string().optional(),
+                name: Joi.string().optional().description("Battle Name"),
 
                 attackerKing: Joi.string().optional(),
 
@@ -251,6 +305,7 @@ let searchBy = {
 
 module.exports = [
     importCSVIntoDB,
+    getJSONFromCSV,
     listPlaces,
     countData,
     //getStats,
